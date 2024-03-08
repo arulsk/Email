@@ -9,9 +9,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@big-kahuna-burger/acme-dns-01-azure": "^0.1.24",
     "bcrypt": "^5.1.1",
+    "certbot": "^5.0.3",
+    "dotenv": "^16.4.1",
     "express": "^4.18.2",
+    "le-store-certbot": "^2.2.3",
+    "moment": "^2.30.1",
+    "mongoose": "^8.1.2",
     "mysql2": "^3.9.1",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.9.9",
     "sequelize": "^6.36.0"
   }

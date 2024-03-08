@@ -1,23 +1,10 @@
-const userAuth = require('../model/userModel');
+const email = require('../model/userModel');
 const bcyrpt = require('bcrypt');
-const nodeMailer = require('nodemailer');
-const fs = require('fs');
-const path = require('path');
+const  cron = require('node-cron')
+const moment = require('moment') 
+const {signUPMail,thanksEmail} = require('../services/mailservice')
+const signUp =  async (req, res) => {
 
-const templatePath = path.join(__dirname, '../htmlTem/template.html');
-const template = fs.readFileSync(templatePath, 'utf8');
-
-const transporter = nodeMailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: "arulk1535@gmail.com",
-        pass: "npgclcbzppylwriw"
-    },tls:{
-        rejectUnauthorized : false
-    }
-});
-
-const signUp = async (req, res) => {
     try {
         const { userName, userEmail, userPassword, role } = req.body;
 
@@ -29,14 +16,18 @@ const signUp = async (req, res) => {
 
         const hashPassword = await bcyrpt.hash(userPassword, 10);
 
-        const user = await userAuth.createUser(userName, userEmail, hashPassword, role);
+        const user = await email.create({userName, userEmail, userPassword : hashPassword, role});
+       await signUPMail(user)
 
-        await transporter.sendMail({
-            from: "arulk1535@gmail.com",
-            to: userEmail,
-            subject: 'Welcome to Tech Savvy',
-            html: template.replace('{{username}}', userName)
-        });
+       
+     const shTime = moment();
+     shTime.add(1,'minute') 
+     const cronExpre = `${shTime.minute()}} ${shTime.hour()} * * * `;
+
+      const job = cron.schedule(cronExpre,async() => {
+        thanksEmail(user)
+        job.stop()
+    })
 
         console.log('Sign-up successful! Email sent.');
         res.status(201).json({ message: "Sign-up successful", user });
@@ -53,4 +44,5 @@ const signUp = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
-module.exports = {signUp}
+
+module.exports = {signUp} 

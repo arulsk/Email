@@ -1,39 +1,24 @@
-const Sequelize = require('sequelize');
-const sequleize = require('../config/db');
+const mongoose = require('mongoose');
 
-const userAuth = sequleize.define("jwt", {
-    userId : {
-      type : Sequelize.INTEGER,
-      primaryKey : true,
-      autoIncrement: true 
+const email= new mongoose.Schema({
+  userName : {
+        type : String,
+        
     },
-    userName: { 
-      type: Sequelize.STRING,
-      allowNull: false,
+    userEmail:{
+        type : String,
+        
     },
-    userEmail: { 
-      type: Sequelize.STRING,
-      allowNull: false,
+    userPassword : {
+        type : String,
+        
     },
-    userPassword: { 
-      type: Sequelize.STRING(60),
-      allowNull: false,
-     },
     role : {
-      type : Sequelize.STRING,
-      allowNull: false,
+        type : String,
+     
     }
+})
 
-},{
-    timestamps: false,
-  });
-  const createUser = async(userName,userEmail,hashPassword,role)=>{
-    return await userAuth.create({
-       userName,
-       userEmail,
-      userPassword :hashPassword,
-       role
-     })
-   }
+const model = mongoose.model("email",email)
 
-module.exports = {userAuth,createUser}
+module.exports = model
